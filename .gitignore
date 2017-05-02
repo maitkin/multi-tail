@@ -1,2 +1,13 @@
 .my-proj*
 .vagrant
+Makefile
+aclocal.m4
+autom4te.cache/
+config.log
+config.status
+doc/Makefile
+src/.deps/
+src/Makefile
+src/*.o
+src/mtail
+
