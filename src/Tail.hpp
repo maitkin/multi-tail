@@ -33,13 +33,15 @@ private:
 	string pattern;
 	string baseFileName;
 	string baseDirectory;
+	bool suppressFilename;
 
 public:
-	Tail(string path, string _pattern) {
+	Tail(string path, string _pattern, bool suppress_filename) {
 
 		TRACE("Tail(%s,%s)\n",path.c_str(),_pattern.c_str());
 		FilePath = path;
 		pattern = _pattern;
+		suppressFilename = suppress_filename;
 
 		// extract base name,dir
 		char _path[strlen(path.c_str())],_dir[strlen(path.c_str())];
@@ -130,7 +132,11 @@ protected:
 			while ((rc = read(fd, buf, sizeof(buf))) > 0) {
 								
 				if (pattern.empty()) {
-					printf("\033[0;31m%s:\033[0m",baseFileName.c_str());
+
+					if (!suppressFilename) {
+						printf("\033[0;31m%s:\033[0m",baseFileName.c_str());
+					}
+					fflush(stdout);
 					wc = write(STDOUT_FILENO, buf, rc);
 				}
 				else {
@@ -139,7 +145,10 @@ protected:
 										
 					for (vector<string>::iterator it = lines.begin(); it != lines.end(); ++it) {
 						if ( strstr((*it).c_str(), pattern.c_str()) != NULL) {
-							printf("\033[0;31m%s:\033[0m %s\n",baseFileName.c_str(),(*it).c_str());														
+							if (!suppressFilename) {
+								printf("\033[0;31m%s\033[0m:",baseFileName.c_str());
+							}
+							printf("%s\n",(*it).c_str());
 						}
 					}
 				}								
